@@ -53,6 +53,7 @@ object KafkaDirectStream {
     stream.map(record => (record.key, record.value)).print()
 
     streamingContext.start()
-    streamingContext.awaitTermination()
+//    streamingContext.awaitTermination()
+    streamingContext.stop()
   }
 }
