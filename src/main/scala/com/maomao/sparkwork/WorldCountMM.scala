@@ -9,7 +9,9 @@ import org.apache.spark.{SparkConf, SparkContext}
  **/
 object WorldCountMM {
   def main(args: Array[String]): Unit = {
-    val conf = new SparkConf().setMaster("local").setAppName("wordCount")
+    val conf = new SparkConf()
+//      .setMaster("local")
+      .setAppName("wordCount")
     val sc = new SparkContext(conf)
     sc.textFile(args(0))
       .flatMap(_.split(" "))
