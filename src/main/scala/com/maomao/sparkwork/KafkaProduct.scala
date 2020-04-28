@@ -23,7 +23,7 @@ object KafkaProduct {
     text.foreachPartition(f=>{
       f.foreach(line=>{
         val props = new util.HashMap[String, Object]()
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "skyeye.qianxin.com:9092")
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "test.mm.com:9092")
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
           "org.apache.kafka.common.serialization.StringSerializer")
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,

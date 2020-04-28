@@ -28,7 +28,7 @@ object KafkaProductStream {
     // 初始化KafkaSink,并广播
     val kafkaProducer: Broadcast[KafkaSink[String, String]] = {
       val kafkaProducerConfig: Map[String, Object] = Map[String, Object](
-        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG -> "skyeye.qianxin.com:9092",
+        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG -> "test.mm.com:9092",
         //        ProducerConfig.ACKS_CONFIG -> properties.getProperty("kafka1.acks"),
         //        ProducerConfig.RETRIES_CONFIG -> properties.getProperty("kafka1.retries"),
         //        ProducerConfig.BATCH_SIZE_CONFIG -> properties.getProperty("kafka1.batch.size"),
@@ -46,7 +46,7 @@ object KafkaProductStream {
 
     def getKafkaProducerParams(): Map[String, Object] = {
       Map[String, Object](
-        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG -> "skyeye.qianxin.com:9092",
+        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG -> "test.mm.com:9092",
         //        ProducerConfig.ACKS_CONFIG -> properties.getProperty("kafka1.acks"),
         //        ProducerConfig.RETRIES_CONFIG -> properties.getProperty("kafka1.retries"),
         //        ProducerConfig.BATCH_SIZE_CONFIG -> properties.getProperty("kafka1.batch.size"),

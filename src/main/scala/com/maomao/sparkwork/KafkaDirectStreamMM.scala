@@ -24,7 +24,7 @@ object KafkaDirectStreamMM {
        * 指定 broker 的地址清单，清单里不需要包含所有的 broker 地址，生产者会从给定的 broker 里查找其他 broker 的信息。
        * 不过建议至少提供两个 broker 的信息作为容错。
        */
-      "bootstrap.servers" -> "skyeye.qianxin.com:9092",
+      "bootstrap.servers" -> "test.mm.com:9092",
       /*键的序列化器*/
       "key.deserializer" -> classOf[StringDeserializer],
       /*值的序列化器*/
