@@ -74,7 +74,7 @@ object SparkKafkaTest {
         val df = filteredRDD.toDF()
 
         df.show()
-        //将数据写到hdfs中:hdfs://hd1:9000/360
+        //将数据写到hdfs中:hdfs://hd1:9000/test
         df.repartition(1).write.mode(SaveMode.Append).parquet(args(0))
 
         //提交当前批次的偏移量，偏移量最后写入kafka
