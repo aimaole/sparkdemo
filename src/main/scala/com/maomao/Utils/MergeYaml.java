@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * 合并两个yml文件或者合并两个Json配置。
- * 注意这里的yml不支持 - 这种数组表达方式，而是把 - 作为普通字符来看待。这是从Noah1继承的，因为Noah1中有一个索引连字符是-
+ * 注意这里的yml不支持 - 这种数组表达方式，而是把 - 作为普通字符来看待。
  */
 public class MergeYaml {
 
