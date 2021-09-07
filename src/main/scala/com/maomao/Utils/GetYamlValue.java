@@ -1,19 +1,16 @@
 package com.maomao.Utils;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Date 2020/4/15 15:02
- * @Version 1.0
- **/
 public class GetYamlValue {
     private static final String PARAM_PREFIX = "-D";
     private static final String KEY_INPUT_FILE = "input.file";
     private static final String KEY_KEY = "key";
+    private static final String DB_TYPE = "db.type";
     private static final String DB_IP = "db.ip";
     private static final String DB_PORT = "db.port";
     private static final String DB_NAME = "db.name";
@@ -34,6 +31,7 @@ public class GetYamlValue {
         System.out.println("usage: GetYamlValue  -Dinput.file=  -Dkey=  ");
         System.out.println("-Dinput.file=    yaml文件路径  ");
         System.out.println("-Dkey=      获取通用yaml文件的属性值 ");
+        System.out.println("定制 -Dkey=   db.type   获取application.yaml中springboot的url来判断使用的数据库");
         System.out.println("定制 -Dkey=   db.ip   获取application.yaml中springboot的db ip ,多个ip通过master获取主ip");
         System.out.println("定制 -Dkey=   db.port   获取application.yaml中springboot的db port ,多个ip通过master获取主ip port");
         System.out.println("定制 -Dkey=   db.name   获取application.yaml中url中的数据库名");
@@ -55,27 +53,46 @@ public class GetYamlValue {
         if (params.containsKey(KEY_KEY)) {
             key = params.get(KEY_KEY);
         }
-        JSONObject inputParams = YamlUtils.readYaml(inputFile);
         String value = "";
-        value = getValue(inputParams, key);
-        if (StringUtils.isBlank(value)) {
-            if (DB_IP.equals(key)) {
-                value = getMasterIpAndPort(inputParams).get(DB_IP);
-            } else if (DB_PORT.equals(key)) {
-                value = getMasterIpAndPort(inputParams).get(DB_PORT);
-            } else if (DB_NAME.equals(key)) {
-                value = getDataBaseName(inputParams);
+        try {
+            JSONObject inputParams = YamlUtils.readYaml(inputFile);
+            value = getValue(inputParams, key);
+            if (StringUtils.isBlank(value)) {
+                if (DB_IP.equals(key)) {
+                    value = getOneIpAndPort(inputParams).get(DB_IP);
+                } else if (DB_PORT.equals(key)) {
+                    value = getOneIpAndPort(inputParams).get(DB_PORT);
+                } else if (DB_NAME.equals(key)) {
+                    value = getDataBaseName(inputParams);
+                } else if (DB_TYPE.equals(key)) {
+                    value = getDataBaseType(inputParams);
+                }
             }
+        } catch (Exception e) {
+            System.out.println(" 获取文件" + inputFile + "的" + key + "失败！！！");
+            e.printStackTrace();
+            System.exit(1);
         }
         System.out.print(value);
     }
 
-    private Map<String, String> getMasterIpAndPort(Map<String, Object> inputParams) {
+    private Map<String, String> getOneIpAndPort(Map<String, Object> inputParams) {
+        String dataBaseType = getDataBaseType(inputParams);
         Map<String, String> result = new HashMap<>();
         Map<String, String> ipPort = new HashMap<>();
         String ip = "";
         String url = getValue(inputParams, "spring.datasource.url");
-        String ipAndPort = url.substring(url.indexOf("//") + 2, url.lastIndexOf('/'));
+        String ipAndPort = "";
+        if (InitDataBase.DataBaseType.DM.name().equals(dataBaseType)) {
+            int i = url.indexOf("?");
+            if (i > 3) {
+                ipAndPort = url.substring(url.indexOf("//") + 2, url.lastIndexOf('?'));
+            } else {
+                ipAndPort = url.substring(url.indexOf("//") + 2);
+            }
+        } else {
+            ipAndPort = url.substring(url.indexOf("//") + 2, url.lastIndexOf('/'));
+        }
         if (ipAndPort.contains(",")) {
             String[] ipAndPorts = ipAndPort.split(",");
             String[] split = ipAndPorts[0].split(":");
@@ -88,6 +105,11 @@ public class GetYamlValue {
         result.put(DB_IP, ip);
         result.put(DB_PORT, ipPort.get(ip));
         return result;
+    }
+
+    private String getDataBaseType(Map<String, Object> inputParams) {
+        String driver = getValue(inputParams, "spring.datasource.driver-class-name");
+        return InitDataBase.DataBaseType.from(driver).name();
     }
 
     private String getDataBaseName(Map<String, Object> inputParams) {

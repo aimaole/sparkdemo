@@ -2,11 +2,6 @@ package com.maomao.sparkwork
 
 import org.apache.spark.{SparkConf, SparkContext}
 
-/**
- * @Author maohongqi
- * @Date 2020/3/6 11:22
- * @Version 1.0
- **/
 object WorldCountMM {
   def main(args: Array[String]): Unit = {
     val conf = new SparkConf()

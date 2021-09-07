@@ -9,7 +9,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -115,7 +114,7 @@ public class YamlUtils {
      * 通过注释map与yaml的值map生成file
      *
      * @param map
-     * @param notes
+     * @param note
      * @param file
      * @return
      */
@@ -178,16 +177,6 @@ public class YamlUtils {
         return value;
     }
 
-    public static Map<String, Object> getYamlToMap(String filePath) {
-        LinkedHashMap<String, Object> yamls = new LinkedHashMap<>();
-        Yaml yaml = new Yaml();
-        try (InputStream in = new FileInputStream(filePath)) {
-            yamls = yaml.loadAs(in, LinkedHashMap.class);
-        } catch (Exception e) {
-        }
-        return yamls;
-    }
-
     public static Object getValue(String key, Map<String, Object> yamlMap) {
         String[] keys = key.split("[.]");
         Object o = yamlMap.get(keys[0]);
@@ -200,39 +189,6 @@ public class YamlUtils {
         } else {
             return o;
         }
-    }
-
-    public static boolean updateYaml(String key, Object value, String filePath) {
-        Map<String, Object> yamlToMap = getYamlToMap(filePath);
-        if (null == yamlToMap) {
-            return false;
-        }
-        Object oldVal = getValue(key, yamlToMap);
-        //未找到key 不修改
-        if (null == oldVal) {
-            return false;
-        }
-        //不是最小节点值，不修改
-        if (oldVal instanceof Map) {
-            return false;
-        }
-        //新旧值一样 不修改
-        if (value.equals(oldVal)) {
-            return true;
-        }
-
-        Yaml yaml = new Yaml(OPTIONS);
-        try {
-            Map<String, Object> resultMap = setValue(yamlToMap, key, value);
-            if (resultMap != null) {
-                yaml.dump(setValue(yamlToMap, key, value), new FileWriter(filePath));
-                return true;
-            } else {
-                return false;
-            }
-        } catch (IOException e) {
-        }
-        return false;
     }
 
     public static Map<String, Object> setValue(Map<String, Object> map, String key, Object value) {
@@ -316,45 +272,7 @@ public class YamlUtils {
         return ret.toString();
     }
 
-    public static void replacTextContent(String path, String key, Object value) throws IOException {
-        BufferedReader bufIn = null;
-        FileWriter out = null;
-        File file = new File(path);
-        try (FileReader in = new FileReader(file)) {
-            bufIn = new BufferedReader(in);
-            // 内存流, 作为临时流
-            CharArrayWriter tempStream = new CharArrayWriter();
-            // 替换
-            String line = null;
-            while ((line = bufIn.readLine()) != null) {
-                // 替换每行中, 符合条件的字符串
-                if (line.contains(key)) {
-                    String srcStr = line.trim();
-                    String replaceStr = key + " " + value;
-                    line = line.replace(srcStr, replaceStr);
-                }
-                // 将该行写入内存
-                tempStream.write(line);
-                // 添加换行符
-                tempStream.append(System.getProperty("line.separator"));
-            }
-            // 关闭 输入流
-            bufIn.close();
-            // 将内存中的流 写入 文件
-            out = new FileWriter(file);
-            tempStream.writeTo(out);
-        } catch (Exception e) {
-        } finally {
-            if (bufIn != null) {
-                bufIn.close();
-            }
-            if (out != null) {
-                out.close();
-            }
-        }
-    }
-
-    private static int spacesAtBeginningCount(String str) {
+        private static int spacesAtBeginningCount(String str) {
         // 防止字符串尾部有空格，先加上一个字符串A 然后再去除前后空格，因为确定字符串最后是没有空格，所有做到只去除前空格
         String temp = (str + "A").trim();
         // 输出原字符串长度 - 去除空格后的长度的差 得到 字符串前 空格长度

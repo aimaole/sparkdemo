@@ -14,12 +14,6 @@ public class FillConf {
     private static final String KEY_CONFIG_INPUT = "config.input";
     private static final String KEY_CONFIG_TEMPALTE = "config.template";
     private static final String KEY_CONFIG_OUTPUT = "config.output";
-    private static final String KEY_PATH = "path";
-    private static final String CONFIG = "config";
-    private static final String ENCRYPT = "encrypt";
-    private static final String LOCAL = "local";
-    private static final String IP = "ip";
-    private static final String NOAH = "noah";
 
     private String configInput = "";
     private String configTemplate = "";
